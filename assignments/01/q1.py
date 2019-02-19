@@ -7,7 +7,7 @@ cs20.stanford.edu
 Created by Chip Huyen (chiphuyen@cs.stanford.edu)
 """
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+# os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 
 import tensorflow as tf
 
@@ -31,18 +31,42 @@ print(sess.run(out))
 ###############################################################################
 
 # YOUR CODE
+x = tf.random_uniform([], minval=-1, maxval=1)
+y = tf.random_uniform([], minval=-1, maxval=1)
+
+
+def c1(): return tf.add(x, y)
+
+
+def c2(): return tf.subtract(x, y)
+
+
+def default(): return tf.constant(0.0)
+
+
+out = tf.case([(tf.less(x, y), c1), (tf.greater(x, y), c2)], default=default)
+print(sess.run(out))
 
 ###############################################################################
-# 1c: Create the tensor x of the value [[0, -2, -1], [0, 1, 2]] 
+# 1c: Create the tensor x of the value [[0, -2, -1], [0, 1, 2]]
 # and y as a tensor of zeros with the same shape as x.
 # Return a boolean tensor that yields Trues if x equals y element-wise.
 # Hint: Look up tf.equal().
 ###############################################################################
 
 # YOUR CODE
+x = tf.constant([[0, -2, -1], [0, 1, 2]])
+y = tf.zeros_like(x)
+
+out = tf.equal(x, y, name='is_equal')
+#writer = tf.summary.FileWriter('./graphs', tf.get_default_graph())
+with tf.Session() as sess:
+    #writer = tf.summary.FileWriter('./graphs', sess.graph)
+    print(sess.run(out))
+# writer.close()
 
 ###############################################################################
-# 1d: Create the tensor x of value 
+# 1d: Create the tensor x of value
 # [29.05088806,  27.61298943,  31.19073486,  29.35532951,
 #  30.97266006,  26.67541885,  38.08450317,  20.74983215,
 #  34.94445419,  34.45999146,  29.06485367,  36.01657104,
@@ -55,6 +79,19 @@ print(sess.run(out))
 ###############################################################################
 
 # YOUR CODE
+
+x = tf.constant([29.05088806,  27.61298943,  31.19073486,  29.35532951,
+                 30.97266006,  26.67541885,  38.08450317,  20.74983215,
+                 34.94445419,  34.45999146,  29.06485367,  36.01657104,
+                 27.88236427,  20.56035233,  30.20379066,  29.51215172,
+                 33.71149445,  28.59134293,  36.05556488,  28.66994858])
+# condition = tf.cond(tf.)
+filter_values = tf.where(tf.greater(x, tf.constant(30.0)))
+get_values = tf.gather(params=x, indices=filter_values)
+with tf.Session() as sess:
+    #writer = tf.summary.FileWriter('./graphs', sess.graph)
+    print(sess.run(filter_values))
+    print(sess.run(get_values))
 
 ###############################################################################
 # 1e: Create a diagnoal 2-d tensor of size 6 x 6 with the diagonal values of 1,
